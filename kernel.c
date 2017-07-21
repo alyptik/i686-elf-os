@@ -40,7 +40,7 @@ static const int VGA_ROWS = 25;
 static int term_col = 0;
 static int term_row = 0;
 /* Black background, White foreground */
-static uint8_t term_color = 0x1A;
+static uint8_t term_color = 0x02;
 
 /* This function initiates the terminal by clearing it */
 void term_init(void)
