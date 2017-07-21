@@ -4,8 +4,8 @@ TAGS
 vgcore*
 
 # Binaries
-mykernel.elf
-t/test
+*.elf
+*.iso
 
 # Object files
 *.o

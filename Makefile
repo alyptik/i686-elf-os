@@ -25,8 +25,12 @@ LDLIBS = -lgcc
 OBJ = kernel.o start.o
 
 TARGET = mykernel.elf
+GRUB_DIR = isoroot
+ISO = $(patsubst %.elf, %.iso, $(TARGET))
 
 all: $(TARGET)
+	@cp -v $(TARGET) $(GRUB_DIR)/boot/
+	grub-mkrescue $(GRUB_DIR) -o $(ISO)
 
 %:
 	$(CC) $(LDFLAGS) $(LDLIBS) $(TARGET_ARCH) $(OBJ) -o $@
@@ -41,6 +45,6 @@ $(TARGET): $(OBJ)
 
 clean:
 	@printf "%s\n" "cleaning"
-	@rm -fv $(TARGET) $(OBJ)
+	@rm -fv $(TARGET) $(ISO) $(OBJ) $(GRUB_DIR)/boot/$(TARGET)
 
 .PHONY: all clean
