@@ -1,5 +1,5 @@
 #
-# start.s - x86 assembly code that starts our kernel and sets up environment
+# _start.s - x86 assembly code that _starts our kernel and sets up environment
 #
 # Copyright 2017 Joey Pabalinas <alyptik@protonmail.com>
 #
@@ -19,10 +19,14 @@
 # That's because it's the name of the main C function in 'kernel.c'.
 .extern kernel_main
 
-# We declare the 'start' label as global (accessible from outside this file),
+# We declare the '_start' label as global (accessible from outside this file),
 # since the linker will need to know where it is.
 # In a bit, we'll actually take a look at the code that defines this label.
-.global start
+# The linker script specifies _start as the entry point to the kernel and the
+# bootloader will jump to this position once the kernel has been loaded. It
+# doesn't make sense to return from this function as the bootloader is gone.
+.global _start
+.type _start, @function
 
 # Our bootloader, GRUB, needs to know some basic information about our kernel
 # before it can boot it.
@@ -39,7 +43,7 @@
 # Finally, we calculate a checksum that includes all the previous values
 .set MB_CHECKSUM, (0 - (MB_MAGIC + MB_FLAGS))
 
-# We now start the section of the executable that will contain our Multiboot header
+# We now _start the section of the executable that will contain our Multiboot header
 .section .multiboot
 	# Make sure the following data is aligned on a multiple of 4 bytes
 	# Use the previously calculated constants in executable code
@@ -62,15 +66,15 @@
 
 # This section contains our actual assembly code to be run when our kernel loads
 .section .text
-	# Here is the 'start' label we mentioned before. This is the first code
+	# Here is the '_start' label we mentioned before. This is the first code
 	# that gets run in our kernel.
-	start:
+	_start:
 		# First thing's first: we want to set up an environment that's
 		# ready to run C code.
 		# C is very relaxed in its requirements: All we need to do is
 		# to set up the stack.
 		# Please note that on x86, the stack grows DOWNWARD. This is
-		# why we start at the top.
+		# why we _start at the top.
 		mov $stack_top, %esp # Set the stack pointer to the top of the stack
 
 		# This is a good place to initialize crucial processor state before the
@@ -94,6 +98,6 @@
 			hlt      # Halt the CPU
 			jmp hang # If that didn't work, loop around and try again.
 
-# Set the size of the start symbol to the current location '.' minus its start.
+# Set the size of the _start symbol to the current location '.' minus its _start.
 # This is useful when debugging or when you implement call tracing.
-.size start, . - start
+.size _start, . - _start
