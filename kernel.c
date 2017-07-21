@@ -26,7 +26,7 @@
 /* First, let's do some basic checks to make sure we are using our x86-elf cross-compiler correctly */
 #if defined(__linux__)
 	#error "This code must be compiled with a cross-compiler"
-#elif !defined(__i386__)
+#elif !defined(__i686__)
 	#error "This code must be compiled with an x86-elf compiler"
 #endif
 
