@@ -33,8 +33,8 @@
 /* This is the x86's VGA textmode buffer. To display text, we write data to this memory location */
 volatile uint16_t *vga_buffer = (uint16_t *)0xB8000;
 /* By default, the VGA textmode buffer has a size of 80x25 characters */
-const int VGA_COLS = 80;
-const int VGA_ROWS = 25;
+static const int VGA_COLS = 80;
+static const int VGA_ROWS = 25;
 
 /* We start displaying text in the top-left of the screen (column = 0, row = 0) */
 static int term_col = 0;
@@ -46,10 +46,8 @@ static uint8_t term_color = 0x1A;
 void term_init(void)
 {
 	/* Clear the textmode buffer */
-	for (int col = 0; col < VGA_COLS; col++)
-	{
-		for (int row = 0; row < VGA_ROWS; row++)
-		{
+	for (int col = 0; col < VGA_COLS; col++) {
+		for (int row = 0; row < VGA_ROWS; row++) {
 			/*
 			 * The VGA textmode buffer has size (VGA_COLS * VGA_ROWS).
 			 * Given this, we find an index into the buffer for our character
