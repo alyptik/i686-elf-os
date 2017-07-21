@@ -33,7 +33,7 @@ all: $(TARGET)
 	grub-mkrescue $(GRUB_DIR) -o $(ISO)
 
 %:
-	$(CC) $(LDFLAGS) $(LDLIBS) $(TARGET_ARCH) $(OBJ) -o $@
+	$(LD) $(LDFLAGS) $(LDLIBS) $(TARGET_ARCH) $(OBJ) -o $@
 
 kernel.o:
 	$(CC) $(CFLAGS) $(TARGET_ARCH) -c kernel.c -o $@
