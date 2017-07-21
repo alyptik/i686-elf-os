@@ -57,7 +57,7 @@
 	# be perfectly adequate.
 	.align 16
 	stack_bottom:
-		.skip 1024 # Reserve a 1024-byte (1K) stack
+		.skip 16384 # 16 KiB
 	stack_top:
 
 # This section contains our actual assembly code to be run when our kernel loads
@@ -73,6 +73,15 @@
 		# why we start at the top.
 		mov $stack_top, %esp # Set the stack pointer to the top of the stack
 
+		# This is a good place to initialize crucial processor state before the
+		# high-level kernel is entered. It's best to minimize the early
+		# environment where crucial features are offline. Note that the
+		# processor is not fully initialized yet: Features such as floating
+		# point instructions and instruction set extensions are not initialized
+		# yet. The GDT should be loaded here. Paging should be enabled here.
+		# C++ features such as global constructors and exceptions will require
+		# runtime support to work as well.
+
 		# Now we have a C-worthy (haha!) environment ready to run the
 		# rest of our kernel.
 		# At this point, we can call our main C function.
@@ -84,3 +93,7 @@
 			cli      # Disable CPU interrupts
 			hlt      # Halt the CPU
 			jmp hang # If that didn't work, loop around and try again.
+
+# Set the size of the start symbol to the current location '.' minus its start.
+# This is useful when debugging or when you implement call tracing.
+.size start, . - start
