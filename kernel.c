@@ -20,14 +20,17 @@
  * GCC provides these header files automatically
  * They give us access to useful things like fixed-width types
  */
+#if !defined(__cplusplus)
+#	include <stdbool.h>
+#endif
 #include <stddef.h>
 #include <stdint.h>
 
 /* First, let's do some basic checks to make sure we are using our x86-elf cross-compiler correctly */
 #if defined(__linux__)
-	#error "This code must be compiled with a cross-compiler"
-#elif !defined(__i686__)
-	#error "This code must be compiled with an x86-elf compiler"
+/* #	error "This code must be compiled with a cross-compiler" */
+#elif !defined(__i386__)
+#	error "This code must be compiled with an x86-elf compiler"
 #endif
 
 /* This is the x86's VGA textmode buffer. To display text, we write data to this memory location */
@@ -40,11 +43,49 @@ static const int VGA_ROWS = 25;
 static int term_col = 0;
 static int term_row = 0;
 /* Black background, White foreground */
-static uint8_t term_color = 0x02;
+static uint8_t term_color;
+
+/* Hardware text mode color constants. */
+enum vga_color {
+	VGA_BLACK = 0,
+	VGA_BLUE = 1,
+	VGA_GREEN = 2,
+	VGA_CYAN = 3,
+	VGA_RED = 4,
+	VGA_MAGENTA = 5,
+	VGA_BROWN = 6,
+	VGA_LIGHT_GREY = 7,
+	VGA_DARK_GREY = 8,
+	VGA_LIGHT_BLUE = 9,
+	VGA_LIGHT_GREEN = 10,
+	VGA_LIGHT_CYAN = 11,
+	VGA_LIGHT_RED = 12,
+	VGA_LIGHT_MAGENTA = 13,
+	VGA_LIGHT_BROWN = 14,
+	VGA_WHITE = 15,
+};
+
+static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg)
+{
+	return fg | (bg << 4);
+}
+
+static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
+{
+	return (uint16_t)uc | ((uint16_t)color << 8);
+}
+
+static inline size_t strlen(const char *str)
+{
+	size_t len;
+	for (len = 0; str[len]; len++);
+	return len;
+}
 
 /* This function initiates the terminal by clearing it */
 void term_init(void)
 {
+	term_color = vga_entry_color(VGA_LIGHT_GREEN, VGA_BLACK);
 	/* Clear the textmode buffer */
 	for (int col = 0; col < VGA_COLS; col++) {
 		for (int row = 0; row < VGA_ROWS; row++) {
@@ -60,7 +101,8 @@ void term_init(void)
 			 * - C is the ASCII character
 			 */
 			/* Set the character to blank (a space character) */
-			vga_buffer[index] = ((uint16_t)term_color << 8) | ' ';
+			/* vga_buffer[index] = ' ' | ((uint16_t)term_color << 8); */
+			vga_buffer[index] = vga_entry(' ', term_color);
 		}
 	}
 }
@@ -71,21 +113,18 @@ void term_putc(char c)
 	/* Remember - we don't want to display ALL characters! */
 	switch (c) {
 	/* Newline characters should return the column to 0, and increment the row */
-	case '\n':
-		{
+	case '\n': {
 			term_col = 0;
 			term_row++;
 			break;
 		}
 
 	/* Normal characters just get displayed and then increment the column */
-	default:
-		{
+	default: {
 			/* Like before, calculate the buffer index */
 			const size_t index = (VGA_COLS * term_row) + term_col;
 			vga_buffer[index] = ((uint16_t)term_color << 8) | c;
 			term_col++;
-			break;
 		}
 	}
 
@@ -109,13 +148,12 @@ void term_putc(char c)
 }
 
 /* This function prints an entire string onto the screen */
-void term_print(const char* str)
+void term_print(const char *str)
 {
 	/* Keep placing characters until we hit the null-terminating character ('\0') */
-	for (size_t i = 0; str[i] != '\0'; i++)
+	for (size_t i = 0; i < strlen(str); i++)
 		term_putc(str[i]);
 }
-
 
 /* This is our kernel's main function */
 void kernel_main(void)
