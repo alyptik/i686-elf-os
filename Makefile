@@ -19,16 +19,26 @@ CC := i686-elf-gcc
 LD := $(CC)
 PREFIX ?= $(DESTDIR)/usr/local
 TARGET_ARCH ?= -march=i686 -mtune=generic
-CFLAGS := -g -ffreestanding -Wall -Wextra -std=c11 -pedantic-errors
-LDFLAGS := $(CFLAGS) -nostdlib -T linker.ld 
+CFLAGS := -ffreestanding -Wall -Wextra -std=c11 -pedantic-errors
+LDFLAGS := $(CFLAGS) -nostdlib -T linker.ld -Wl,-O1,-zrelro,-znow,--sort-common,--as-needed
 LDLIBS := -lgcc
+DEBUG := -Og -ggdb -pipe
+RELEASE := -O2 -pipe
 
 TARGET := i686-elf-os.elf
 OBJ := kernel.o start.o
 GRUB_DIR := isoroot
 ISO := $(patsubst %.elf, %.iso, $(TARGET))
 
-all: $(TARGET)
+all: CFLAGS += $(RELEASE)
+all: LDFLAGS += $(RELEASE)
+all: $(TARGET) iso
+
+debug: CFLAGS += $(DEBUG)
+debug: LDFLAGS += $(DEBUG)
+debug: $(TARGET) iso
+
+iso: $(TARGET)
 	@cp -v $(TARGET) $(GRUB_DIR)/boot/
 	grub-mkrescue $(GRUB_DIR) -o $(ISO)
 
