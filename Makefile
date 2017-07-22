@@ -24,7 +24,7 @@ LDFLAGS := $(CFLAGS) -nostdlib -T linker.ld
 LDLIBS := -lgcc
 OBJ := kernel.o start.o
 
-TARGET := mykernel.elf
+TARGET := i686-elf-os.elf
 GRUB_DIR := isoroot
 ISO := $(patsubst %.elf, %.iso, $(TARGET))
 
