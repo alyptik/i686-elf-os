@@ -113,19 +113,16 @@ void term_putc(char c)
 	/* Remember - we don't want to display ALL characters! */
 	switch (c) {
 	/* Newline characters should return the column to 0, and increment the row */
-	case '\n': {
-			term_col = 0;
-			term_row++;
-			break;
-		}
+	case '\n':
+		term_col = 0;
+		term_row++;
+		break;
 
 	/* Normal characters just get displayed and then increment the column */
-	default: {
-			/* Like before, calculate the buffer index */
-			const size_t index = (VGA_COLS * term_row) + term_col;
-			vga_buffer[index] = ((uint16_t)term_color << 8) | c;
-			term_col++;
-		}
+	default:
+		/* Like before, calculate the buffer index */
+		vga_buffer[(VGA_COLS * term_row) + term_col] = ((uint16_t)term_color << 8) | c;
+		term_col++;
 	}
 
 	/*
