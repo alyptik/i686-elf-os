@@ -108,7 +108,7 @@ void term_init(void)
 }
 
 /* This function places a single character onto the screen */
-void term_putc(char c)
+void term_putc(unsigned char c)
 {
 	/* Remember - we don't want to display ALL characters! */
 	switch (c) {

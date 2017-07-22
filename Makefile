@@ -15,18 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-CC = i686-elf-gcc
-LD = $(CC)
+CC := i686-elf-gcc
+LD := $(CC)
 PREFIX ?= $(DESTDIR)/usr/local
 TARGET_ARCH ?= -march=i686 -mtune=generic
-CFLAGS = -g -ffreestanding -Wall -Wextra -std=c11 -pedantic-errors
-LDFLAGS = -g -ffreestanding -nostdlib -T linker.ld -Wall -Wextra -std=c11 -pedantic-errors
-LDLIBS = -lgcc
-OBJ = kernel.o start.o
+CFLAGS := -g -ffreestanding -Wall -Wextra -std=c11 -pedantic-errors
+LDFLAGS := $(CFLAGS) -nostdlib -T linker.ld 
+LDLIBS := -lgcc
+OBJ := kernel.o start.o
 
-TARGET = mykernel.elf
-GRUB_DIR = isoroot
-ISO = $(patsubst %.elf, %.iso, $(TARGET))
+TARGET := mykernel.elf
+GRUB_DIR := isoroot
+ISO := $(patsubst %.elf, %.iso, $(TARGET))
 
 all: $(TARGET)
 	@cp -v $(TARGET) $(GRUB_DIR)/boot/
