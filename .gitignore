@@ -2,6 +2,7 @@ tags
 TAGS
 *.swp
 vgcore*
+kernel.s
 
 # Binaries
 *.elf
