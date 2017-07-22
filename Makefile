@@ -22,9 +22,9 @@ TARGET_ARCH ?= -march=i686 -mtune=generic
 CFLAGS := -g -ffreestanding -Wall -Wextra -std=c11 -pedantic-errors
 LDFLAGS := $(CFLAGS) -nostdlib -T linker.ld 
 LDLIBS := -lgcc
-OBJ := kernel.o start.o
 
 TARGET := i686-elf-os.elf
+OBJ := kernel.o start.o
 GRUB_DIR := isoroot
 ISO := $(patsubst %.elf, %.iso, $(TARGET))
 
@@ -32,7 +32,7 @@ all: $(TARGET)
 	@cp -v $(TARGET) $(GRUB_DIR)/boot/
 	grub-mkrescue $(GRUB_DIR) -o $(ISO)
 
-%:
+$(TARGET): $(OBJ)
 	$(LD) $(LDFLAGS) $(LDLIBS) $(TARGET_ARCH) $(OBJ) -o $@
 
 kernel.o:
@@ -40,8 +40,6 @@ kernel.o:
 
 start.o:
 	$(CC) $(CFLAGS) $(TARGET_ARCH) -c start.s -o $@
-
-$(TARGET): $(OBJ)
 
 clean:
 	@printf "%s\n" "cleaning"
