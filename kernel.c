@@ -20,15 +20,13 @@
  * GCC provides these header files automatically
  * They give us access to useful things like fixed-width types
  */
-#if !defined(__cplusplus)
-#	include <stdbool.h>
-#endif
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
 /* First, let's do some basic checks to make sure we are using our x86-elf cross-compiler correctly */
 #if defined(__linux__)
-/* #	error "This code must be compiled with a cross-compiler" */
+#	error "This code must be compiled with a cross-compiler"
 #elif !defined(__i386__)
 #	error "This code must be compiled with an x86-elf compiler"
 #endif
