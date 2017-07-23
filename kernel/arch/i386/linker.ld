@@ -1,51 +1,21 @@
-/*
- * linker.ld - compiler information about how it should construct our kernel
- *
- * Copyright 2017 Joey Pabalinas <alyptik@protonmail.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-/* The bootloader will start execution at the symbol designated as the entry
- * point. In this case, that's 'start' (defined in start.s) */
+/* The bootloader will look at this image and start execution at the symbol
+   designated at the entry point. */
 ENTRY(_start)
 
-/* Tell the linker part of the compiler where the various sections of the
- * kernel will be put in the final kernel executable. */
+/* Tell where the various sections of the object files will be put in the final
+   kernel image. */
 SECTIONS
 {
-	/* Begin putting sections at 1 Megabyte (1M), a good place for kernels
-	 * to be loaded at by the bootloader.
-	 * This is because memory below 1 Megabyte is reserved for other
-	 * x86-related things, so we can't use it */
+	/* Begin putting sections at 1 MiB, a conventional place for kernels to be
+	   loaded at by the bootloader. */
 	. = 1M;
 
-	/* We align all sections in the executable at multiples of 4 Kilobytes
-	 * (4K). This will become useful later in development when we add paging */
-
-	/* First put the multiboot header, as it's required to be near the
-	 * start of the executable otherwise the bootloader won't find it
-	 * The Multiboot header is Read-Only data, so we can put it in a
-	 * '.rodata' section. */
-	.rodata BLOCK(4K) : ALIGN(4K)
-	{
-		*(.multiboot)
-	}
-
-	/* Executable code */
+	/* First put the multiboot header, as it is required to be put very early
+	   early in the image or the bootloader won't recognize the file format.
+	   Next we'll put the .text section. */
 	.text BLOCK(4K) : ALIGN(4K)
 	{
+		*(.multiboot)
 		*(.text)
 	}
 
@@ -67,4 +37,7 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 	}
+
+	/* The compiler may produce other sections, put them in the proper place in
+	   in this file, if you'd like to include them in the final kernel. */
 }
