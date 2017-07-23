@@ -3,6 +3,10 @@ TAGS
 *.swp
 vgcore*
 kernel.s
+*.iso
+
+isodir
+sysroot
 
 # Binaries
 *.elf
