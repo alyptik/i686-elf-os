@@ -19,40 +19,26 @@ CC := i686-elf-gcc
 LD := $(CC)
 PREFIX ?= $(DESTDIR)/usr/local
 TARGET_ARCH ?= -march=i686 -mtune=generic
-CFLAGS := -ffreestanding -Wall -Wextra -std=c11 -pedantic-errors
+CFLAGS := -ffreestanding -std=c11 -Wall -Wextra -pedantic-errors
 LDFLAGS := $(CFLAGS) -nostdlib -T linker.ld -Wl,-O1,-zrelro,-znow,--sort-common,--as-needed
-LDLIBS := -lgcc
+LIBS := -lgcc
 DEBUG := -Og -ggdb -pipe
 RELEASE := -O2 -pipe
 
-TARGET := i686-elf-os.elf
-OBJ := kernel.o start.o
-GRUB_DIR := isoroot
-ISO := $(patsubst %.elf, %.iso, $(TARGET))
-
 all: CFLAGS += $(RELEASE)
 all: LDFLAGS += $(RELEASE)
-all: $(TARGET) iso
+all: clean
+	./build.sh
+	./qemu.sh
 
 debug: CFLAGS += $(DEBUG)
 debug: LDFLAGS += $(DEBUG)
-debug: $(TARGET) iso
-
-iso: $(TARGET)
-	@cp -v $(TARGET) $(GRUB_DIR)/boot/
-	grub-mkrescue $(GRUB_DIR) -o $(ISO)
-
-$(TARGET): $(OBJ)
-	$(LD) $(LDFLAGS) $(LDLIBS) $(TARGET_ARCH) $(OBJ) -o $@
-
-kernel.o:
-	$(CC) $(CFLAGS) $(TARGET_ARCH) -c kernel.c -o $@
-
-start.o:
-	$(CC) $(CFLAGS) $(TARGET_ARCH) -c start.s -o $@
+debug: clean
+	./build.sh
+	./qemu.sh
 
 clean:
 	@printf "%s\n" "cleaning"
-	@rm -fv $(TARGET) $(ISO) $(OBJ) $(GRUB_DIR)/boot/$(TARGET)
+	./clean.sh
 
-.PHONY: all clean
+.PHONY: all debug clean
