@@ -18,12 +18,13 @@
 CC := i686-elf-gcc
 LD := $(CC)
 PREFIX ?= $(DESTDIR)/usr/local
-TARGET_ARCH ?= -march=i686 -mtune=generic
 CFLAGS := -ffreestanding -std=c11 -Wall -Wextra -pedantic-errors
 LDFLAGS := $(CFLAGS) -nostdlib -T linker.ld -Wl,-O1,-zrelro,-znow,--sort-common,--as-needed
 LIBS := -lgcc
 DEBUG := -Og -ggdb -pipe
 RELEASE := -O2 -pipe
+
+.PHONY: all debug clean
 
 all: CFLAGS += $(RELEASE)
 all: LDFLAGS += $(RELEASE)
@@ -40,5 +41,3 @@ debug: clean
 clean:
 	@printf "%s\n" "cleaning"
 	./clean.sh
-
-.PHONY: all debug clean
