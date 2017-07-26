@@ -11,6 +11,7 @@ sysroot
 # Binaries
 *.elf
 *.iso
+gdt
 
 # Object files
 *.o
