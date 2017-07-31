@@ -64,8 +64,7 @@
                      SEG_LONG(0)     | SEG_SIZE(1) | SEG_GRAN(1) | \
                      SEG_PRIV(3)     | SEG_DATA_RDWR
 
-void
-create_descriptor(uint32_t base, uint32_t limit, uint16_t flag)
+void create_descriptor(uint32_t base, uint32_t limit, uint16_t flag)
 {
     uint64_t descriptor;
 
@@ -85,8 +84,7 @@ create_descriptor(uint32_t base, uint32_t limit, uint16_t flag)
     printf("0x%.16lX\n", descriptor);
 }
 
-int
-main(void)
+int main(void)
 {
     create_descriptor(0, 0, 0);
     create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL0));
