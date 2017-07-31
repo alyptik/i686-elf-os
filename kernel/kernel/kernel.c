@@ -27,5 +27,4 @@ void kernel_main(void)
 	/* Display some messages */
 	terminal_writestring("Hello, World!\n");
 	terminal_writestring("Welcome to the kernel.\n");
-
 }

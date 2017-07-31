@@ -18,8 +18,7 @@
 
 // Used for creating GDT segment gdtrs in 64-bit integer form.
 
-#include <stdio.h>
-#include <stdint.h>
+#include <kernel/gdt.h>
 
 // Each define here is for a specific flag in the gdtr.
 // Refer to the intel documentation for a description of what each one does.
@@ -85,15 +84,11 @@ void create_descriptor(uint32_t base, uint32_t limit, uint16_t flag)
     /* printf("0x%.16lX\n", gdtr); */
 }
 
-/*
- * int main(void)
- * {
- *     create_descriptor(0, 0, 0);
- *     create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL0));
- *     create_descriptor(0, 0x000FFFFF, (GDT_DATA_PL0));
- *     create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL3));
- *     create_descriptor(0, 0x000FFFFF, (GDT_DATA_PL3));
- *
- *     return 0;
- * }
- */
+void init_gdt(void)
+{
+    create_descriptor(0, 0, 0);
+    create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL0));
+    create_descriptor(0, 0x000FFFFF, (GDT_DATA_PL0));
+    create_descriptor(0, 0x000FFFFF, (GDT_CODE_PL3));
+    create_descriptor(0, 0x000FFFFF, (GDT_DATA_PL3));
+}
