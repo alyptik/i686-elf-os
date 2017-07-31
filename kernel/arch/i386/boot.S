@@ -46,22 +46,6 @@
 		# Call the global constructors.
 		call _init
 
-		# cli          # disable interrupts
-		# lgdt (gdtr) # load GDT register with start address of Global Descriptor Table
-		# mov %cr0, %eax
-		# or $1, %al     # set PE (Protection Enable) bit in CR0 (Control Register 0)
-		# mov %eax, %cr0
-		#
-		# # Perform far jump to selector 08h (offset into GDT, pointing at a 32bit PM code segment descriptor)
-		# # to load CS with proper PM32 descriptor)
-		#
-		# jmp PModeMain + 0x08
-		#
-		# # [...]
-		#
-		# PModeMain:
-		# # load DS, ES, FS, GS, SS, ESP.
-
 		# Transfer control to the main kernel.
 		call kernel_main
 
