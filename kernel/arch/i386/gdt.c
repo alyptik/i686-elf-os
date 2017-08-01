@@ -17,7 +17,6 @@
  */
 
 // Used for creating GDT segment gdtrs in 64-bit integer form.
-
 #include <kernel/gdt.h>
 
 // Each define here is for a specific flag in the gdtr.

@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdarg.h>
@@ -28,7 +29,8 @@ int printf(const char* restrict format, ...) {
 			while (format[amount] && format[amount] != '%')
 				amount++;
 			if (maxrem < amount) {
-				// TODO: Set errno to EOVERFLOW.
+				va_end(parameters);
+				errno = EOVERFLOW;
 				return -1;
 			}
 			if (!print(format, amount))
