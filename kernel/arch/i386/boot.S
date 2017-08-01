@@ -80,10 +80,10 @@
 		# to load CS with proper PM32 descriptor)
 		jmp reload_cs
 
-		# Reload CS register containing code selector
 	reload_cs:
 		# 0x10 points at the new data selector
 		movw $0x10, %ax
+		# reload segment registers
 		movw %ax, %ds
 		movw %ax, %es
 		movw %ax, %fs
