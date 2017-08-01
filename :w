@@ -45,7 +45,6 @@
 .section .text
 	.global _start
 	.type _start, @function
-
 	_start:
 		movl $stack_top, %esp
 
@@ -78,24 +77,15 @@
 		mov %eax, %cr0
 		# Perform far jump to selector 08h (offset into GDT, pointing at a 32bit PM code segment descriptor)
 		# to load CS with proper PM32 descriptor)
-		jmp reload_cs
-
-		# Reload CS register containing code selector
-	reload_cs:
-		# 0x10 points at the new data selector
-		movw $0x10, %ax
-		movw %ax, %ds
-		movw %ax, %es
-		movw %ax, %fs
-		movw %ax, %gs
-		movw %ax, %ss
-
+		# jmp pmain + 0x08
 	prot_main:
-		# load ds, es, fs, gs, ss, esp.
-		# transfer control to the main kernel.
+		ljmp $gdt
+
+		# load DS, ES, FS, GS, SS, ESP.
+		# Transfer control to the main kernel.
 		call kernel_main
 
-		# hang if kernel_main unexpectedly returns.
+		# Hang if kernel_main unexpectedly returns.
 		cli
 	1:
 		hlt
